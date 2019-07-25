@@ -26,7 +26,12 @@ final class AccountViewController: UIViewController {
     @IBOutlet weak var lbName: UILabel!
     @IBOutlet weak var tableView: UITableView!
 
-    
+    var lbState: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = UIColor(named: "main")
+        return label
+    }()
     var interactor: AccountBusinessLogic?
     var router: (NSObjectProtocol & AccountRoutingLogic & AccountDataPassing)?
     var dataStore: AccountDataStore?
@@ -34,7 +39,12 @@ final class AccountViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel?.stateChange = {
+            self.lbState.text = self.viewModel?.currentState.rawValue
+        }
+
         configureTableView()
+       
         guard let viewModel = viewModel else {return}
         displayAccountDetails(viewModel: viewModel)
     }
@@ -68,6 +78,7 @@ final class AccountViewController: UIViewController {
     
     func fetchStatements() {
         interactor?.fetchStatements()
+        viewModel?.currentState = .loading
     }
     
 
@@ -104,6 +115,8 @@ extension AccountViewController: AccountDisplayLogic {
 }
 extension AccountViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tableView.backgroundView =  viewModel?.currentState == .loaded ? nil : lbState
+
         return viewModel?.list.count ?? 0
     }
     

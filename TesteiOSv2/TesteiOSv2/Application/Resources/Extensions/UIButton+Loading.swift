@@ -29,12 +29,15 @@ extension UIButton {
                                          height: activityIndicator.bounds.height)
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
-        titleLabel!.alpha = 0
+        titleLabel?.alpha = 0
+        setTitleColor(.clear, for: .normal)
         isUserInteractionEnabled = false
     }
     
     func stopLoading() {
         titleLabel?.alpha = 1
+        titleLabel?.isOpaque = false
+        setTitleColor(.white, for: .normal)
         guard let activityIndicator = viewWithTag(activityIndicatorTag) else { return }
         activityIndicator.removeFromSuperview()
         isUserInteractionEnabled = true

@@ -37,7 +37,9 @@ final class LoginRouter: NSObject, LoginRoutingLogic, LoginDataPassing {
         guard let sourceDataStore = self.dataStore else {
             fatalError()
         }
-        accountViewController.viewModel = AccountViewModel(userAccount: sourceDataStore.userAccount!)
+        if let userAccount = sourceDataStore.userAccount {
+            accountViewController.viewModel = AccountViewModel(userAccount: userAccount)
+        }
         navigateToAccount(source: loginViewController, destination: accountViewController)
     }
     

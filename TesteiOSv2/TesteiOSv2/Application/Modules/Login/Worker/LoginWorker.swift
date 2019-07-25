@@ -14,7 +14,9 @@ import UIKit
 import KeychainSwift
 
 final class LoginWorker {
-    let repository: LoginRepository
+    private let repository: LoginRepository
+    private let keychainSwift = KeychainSwift()
+
     init(repository: LoginRepository = LoginRemoteRepository()) {
         self.repository = repository
     }
@@ -36,6 +38,7 @@ final class LoginWorker {
             case .failure(let error):
                 return completion(.failure(error))
             case .success(let response):
+                self.persistCredentials(fields: request)
                 return completion(.success(response))
             }
         }
@@ -43,11 +46,11 @@ final class LoginWorker {
     
     func persistCredentials(fields: Login) {
         guard let data = try? JSONEncoder().encode(fields) else { return }
-        KeychainSwift().set(data, forKey: "bank")
+        keychainSwift.set(data, forKey: "bank-credentials")
     }
     
     func getPersistedCredentials() -> Login? {
-        guard let data = KeychainSwift().getData("bank") else { return nil }
+        guard let data = keychainSwift.getData("bank-credentials") else { return nil }
         guard let fields = try? JSONDecoder().decode(Login.self, from: data) else { return nil }
         return fields
     }

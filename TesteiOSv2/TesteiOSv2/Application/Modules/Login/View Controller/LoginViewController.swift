@@ -28,8 +28,13 @@ final class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        getPersistedCredentials()
+        
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getPersistedCredentials()
     }
     
     private func setup() {
@@ -43,6 +48,7 @@ final class LoginViewController: UIViewController {
         presenter.viewController = viewController
         router.viewController = viewController
         router.dataStore = interactor
+        getPersistedCredentials()
     }
     
     @IBAction func performLoginTapped(_ sender: UIButton) {
